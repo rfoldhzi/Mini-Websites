@@ -318,6 +318,7 @@ function removeCard(cardName) {
 }
 
 function requirement(event) {
+	copyToClipboard("HI BNUDDYS");
 	const btn = event.currentTarget;
 	btn.data = (btn.data + 1) % 3;
 	const colors = ['#FF0000', '#F8F094', '#00FF00']
@@ -327,8 +328,51 @@ function requirement(event) {
 	genButtons();
 }
 
+function copyButtonInit() {
+	document.getElementById('CopyBtn').addEventListener("click", makeDeckString, false);
+}
+
+function makeDeckString() {
+	document.getElementById('CopyBtn').innerHTML = "Copied!";
+	var elements = document.getElementsByClassName("cardbtn");
+	var string = "";
+	for (var i = 0; i < elements.length; i++) {
+		string += elements[i].name+" x"+elements[i].count+", ";
+	}
+	copyToClipboard(string.slice(0, -2));
+	setTimeout(function(){
+		document.getElementById('CopyBtn').innerHTML = "Copy Deck";
+	}, 2500); 
+}
+//Source: https://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript
+function copyToClipboard(text) {
+    if (window.clipboardData && window.clipboardData.setData) {
+        // Internet Explorer-specific code path to prevent textarea being shown while dialog is visible.
+        return window.clipboardData.setData("Text", text);
+
+    }
+    else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
+        var textarea = document.createElement("textarea");
+        textarea.textContent = text;
+        textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in Microsoft Edge.
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            return document.execCommand("copy");  // Security exception may be thrown by some browsers.
+        }
+        catch (ex) {
+            console.warn("Copy to clipboard failed.", ex);
+            return false;
+        }
+        finally {
+            document.body.removeChild(textarea);
+        }
+    }
+}
+
 window.addEventListener('load', (event) => {
 	initCriteriaButtons();
 	findCards();
 	genButtons();
+	copyButtonInit();
 });
