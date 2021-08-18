@@ -163,8 +163,8 @@ for (var i = 0; i < elements.length; i++) {
 }
 
 function changeDefOver(e) {
-	const source = CardDB[e.target.innerHTML]["art"];
-    document.getElementById("cardImage").setAttribute('src', "images/"+e.target.innerHTML+".png");
+	const source = CardDB[e.target.name]["art"];
+    document.getElementById("cardImage").setAttribute('src', "images/"+e.target.name+".png");
 }
 
 function changeDefOut(e) {
@@ -250,6 +250,7 @@ function addButton(text) {
     btn.setAttribute('id', 'button');
     btn.setAttribute('onclick', 'addCard(this.innerHTML)');
     btn.innerHTML = text;
+    btn.name = text;
     if (text in CardDB) {
     	if ("art" in CardDB[text]) {
         	btn.addEventListener('mouseover', changeDefOver);
@@ -280,10 +281,12 @@ function addCard(cardName) {
         btn.setAttribute('class', 'button cardbtn');
         btn.setAttribute('id', cardName+'card');
 	btn.count = 1;
+	btn.name = cardName;
         btn.setAttribute('alt', cardName);
         btn.setAttribute('onclick', 'addCard(this.getAttribute("alt"))');
         btn.innerHTML = cardName+" x1";
         btnGroup.appendChild(btn);
+	btn.addEventListener('mouseover', changeDefOver);
         btn.addEventListener('contextmenu',  function(ev) {
             ev.preventDefault();
             removeCard(this.getAttribute("alt"));
@@ -301,7 +304,7 @@ function removeCard(cardName) {
         if (existBtn.count < 1) {
         	existBtn.remove();
         } else {
-        	existBtn.innerHTML = existBtn.getAttribute("alt")+" x"+existBtn.count;
+        	existBtn.innerHTML = existBtn.name+" x"+existBtn.count;
         }
    	}
     CountCards()
