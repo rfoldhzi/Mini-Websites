@@ -155,20 +155,9 @@ var CardDB = {
 var matchCards = [];
 const ress = {"Wood":"W","Alloy":"A","Gold":"G","Wisdom":"S","Corruption":"C","Meat":"M","Fish":"F","Ice":"I"};
 
-
-var elements = document.getElementsByClassName("button");
-
-for (var i = 0; i < elements.length; i++) {
-    elements[i].addEventListener('mouseover', changeDefOver);
-}
-
 function changeDefOver(e) {
 	const source = CardDB[e.target.name]["art"];
     document.getElementById("cardImage").setAttribute('src', "images/"+e.target.name+".png");
-}
-
-function changeDefOut(e) {
-  document.getElementById("demo").innerHTML = "56fffff76";
 }
 
 
@@ -246,11 +235,7 @@ function initCriteriaButtons() {
 	}
 }
 
-window.addEventListener('load', (event) => {
-	initCriteriaButtons();
-    findCards();
-    genButtons();
-});
+
 
 function addButton(text) {
 	const btnGroup = document.getElementById('btnGroup');
@@ -331,3 +316,9 @@ function requirement(event) {
     findCards();
     genButtons();
 }
+
+window.addEventListener('load', (event) => {
+	initCriteriaButtons();
+    findCards();
+    genButtons();
+});
