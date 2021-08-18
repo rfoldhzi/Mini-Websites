@@ -162,6 +162,7 @@ const ress = {
 	"Fish": "F",
 	"Ice": "I"
 };
+const cardTypes = ["Unit","Building","Event","Upgrade","Detriment","Base"];
 
 function changeDefOver(e) {
 	const source = CardDB[e.target.name]["art"];
@@ -173,6 +174,8 @@ function findCards() {
 	var ban = [];
 	var reqs2 = [];
 	var ban2 = [];
+	var typeReqs = [];
+	var typeBans = [];
 	matchCards = [];
 	for (var r in ress) {
 		const n = document.getElementById(r).data;
@@ -188,7 +191,14 @@ function findCards() {
 			reqs2.push(ress[r]);
 		}
 	}
-
+	for (var t of cardTypes) {
+		const n = document.getElementById(t).data;
+		if (n == 0) {
+			typeBans.push(t);
+		} else if (n == 2) {
+			typeReqs.push(t);
+		}
+	}
 	for (var c in CardDB) {
 		var good = true;
 		for (var re of reqs) {
@@ -208,6 +218,16 @@ function findCards() {
 		}
 		for (var re of ban2) {
 			if (CardDB[c]["res"].includes(re)) {
+				good = false;
+			}
+		}
+		for (var ty of typeBans) {
+			if (CardDB[c]["type"] == ty) {
+				good = false;
+			}
+		}
+		for (var ty of typeReqs) {
+			if (CardDB[c]["type"] !== ty) {
 				good = false;
 			}
 		}
@@ -236,7 +256,7 @@ function CountCards() {
 }
 
 function initCriteriaButtons() {
-	var elements = document.getElementsByClassName("buttonStyle");
+	var elements = document.getElementsByClassName("reqBtn");
 	for (var i = 0; i < elements.length; i++) {
 		elements[i].data = 1;
 		elements[i].addEventListener('click', requirement, false);
@@ -318,7 +338,6 @@ function removeCard(cardName) {
 }
 
 function requirement(event) {
-	copyToClipboard("HI BNUDDYS");
 	const btn = event.currentTarget;
 	btn.data = (btn.data + 1) % 3;
 	const colors = ['#FF0000', '#F8F094', '#00FF00']
@@ -326,6 +345,18 @@ function requirement(event) {
 	document.getElementById('btnGroup').innerHTML = '';
 	findCards();
 	genButtons();
+}
+
+function collapseBtnInit() {
+	var btn = document.getElementById('unitTypeBtn');
+	var div = document.getElementById('cardTypes');
+	btn.addEventListener("click", function(){
+		if (div.style.display === "block") {
+			div.style.display = "none";
+		} else {
+			div.style.display = "block";
+		}
+	}, false);
 }
 
 function copyButtonInit() {
@@ -375,4 +406,5 @@ window.addEventListener('load', (event) => {
 	findCards();
 	genButtons();
 	copyButtonInit();
+	collapseBtnInit();
 });
