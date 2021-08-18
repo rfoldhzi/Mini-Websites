@@ -1,29 +1,3 @@
-/*
-const cars = ["Saab", "Volvo", "BMW"];
-document.getElementById("demo").innerHTML = cars;
-states_dictionary={
-     "CT":["alex","harry"],
-     "AK":["liza","alex"],
-     "TX":["fred", "harry"]
-};
-*/
-const Cards = [
-    "Soldier;A;1;1;D Bw;3;1;G;-;-;Military;Unit;Common;;;A - Alloy;",
-    "Knight;A A;2;1;D D;3;2;A;Shielding 1 (at the start of the engagement, place 1 shield on a friendly card);-;Military, Chivalry;Unit;;;;C - Corruption;",
-    "Capital;;;20;;;;;Fronts: Forward, Left, Right. Water Front: Rear;5;Main Base;Base;Common;;;;",
-    "Barbarian;M;1;3;Dr Drw;3;0;W;Presence (when this unit attacks, the opponent must defend with at least one defender);-;Outlaw;Unit;;;;F- Fish;",
-    "Peasant;;1;1;Dw;3;0;G;-;-;Civilian;Unit;Common;;;G - Gold;",
-    "Horse Rider;A G G;2;2;D B Dr;2;1;M;-;-;Military, Cavalry;Unit;;;;I - Ice;Winter units",
-    "King;S G G G;3;4;D T Tw;3;4;W G A;During night, summon a peasant from the discard pile.;2;Royalty;Unit;Rare;;;M - Meat;",
-    "Archer;W;1;1;D Dw;3;1;W M;-;-;Military, Ranged;Unit;Common;;;S - Wisdom;",
-    "Bandit;G;1;1;B Dw;3;0;G;-;-;Outlaw;Unit;Common;;;W - Wood;",
-    "Prince;A G G G;2;3;D D Dw Dw;2;4;G S;-;1;Royalty;Unit;Rare;;;;",
-    "Rogue;G W;1;2;D B ;3;-1;W;-;-;Outlaw;Unit;Common;;;;",
-    "Farmer;;1;1;Bw;3;0;W;Guardian Animal;-;Civilian;Unit;Common;;;;",
-    "Unsanctioned Experiments;C;1;;;;;C;Sacrifice a civilian you control to play a card from your discard pile, paying its cost.;;Dark;Event;;;;;",
-    "The Cavalry has arrived;;2;;;;;M;Play when it's your turn to strike. Instead of striking, you may add any number of friendly Cavalry to this front to participate in the engagement.;;Strategy;Event;Rare;;;;",
-];
-
 const ArtCards = ['Soldier', 'Knight', 'Capital', 'Barbarian', 'Peasant', 'Horse Rider', 'King', 'Archer', 'Bandit', 'Prince', 'Rogue', 'Farmer', 'Catapult', 'Mine', 'Mill', 'Market', 'Guard', 'Defender', 'Raider', 'Hunter', 'Marksman', 'Cow', 'Pig', 'Bank', 'Lumber Yard', 'Warehouse', 'Messenger', 'Royal Guard', 'Guard Captain', 'Royal Knight', 'Angry Mob', 'Jester', 'Book', 'Well Prepared', 'Surprise Attack', 'Builder', 'Dragon', 'Rooster', 'Sentry', 'Expert Archer', 'Knight Officer', 'War Hero', 'Flaming Archer', 'Coward', 'Dark Knight', 'Dark King', 'Moat', 'Recruit', 'Dark Alliance', 'Log Trap', 'Knife', 'Angry Farmer', 'Dark Soldier', 'Blacksmith', 'Sword', 'Heater Shield', 'Anvil', 'Crown', 'Front Focused', 'Raging Flames', 'Warning Horn', 'Brawler', 'Winter Soldier', 'Frost Knight', 'Ice Archer', 'Snowman', 'Ice King', 'Plague', 'Rest and Recovery', 'Standoff', 'Snowball', 'Flock', 'Doctor', 'Soldier Squadron', 'Double Cross', 'Two Steps Ahead', 'Bribe', 'Confusion', 'Fear', 'Testudo Formation', 'Warhorn', 'Black Death', 'Hourglass', 'Rally', 'Captain', 'Salmon', 'Giant', 'Regicide', 'Revolution!', 'Decisive Victory', 'Book of Nobility', 'Informant', 'Rumors', 'Snow Bandit', 'Noble Sacrifice', 'Fight Me', 'Disruption', 'Crow', 'Astrolabe', 'Heavy Rain', 'Cloak', 'Rebel', 'Poison', 'Rat', 'Nightmares', 'Dreams', 'Horse', 'Exhaustion', 'Unsanctioned Experiments', 'The Cavalry has arrived', 'George, the Soldier of Legend', 'James, Archer', 'Larry, Bandit'];
 
 var CardDB = {
@@ -183,10 +157,6 @@ const ress = {"Wood":"W","Alloy":"A","Gold":"G","Wisdom":"S","Corruption":"C","M
 
 
 var elements = document.getElementsByClassName("button");
-/*
-elements.addEventListener('mouseover', changeDefOver);
-THINGS.addEventListener('mouseout', changeDefOut);
-*/
 
 for (var i = 0; i < elements.length; i++) {
     elements[i].addEventListener('mouseover', changeDefOver);
@@ -195,10 +165,6 @@ for (var i = 0; i < elements.length; i++) {
 function changeDefOver(e) {
 	const source = CardDB[e.target.innerHTML]["art"];
     document.getElementById("cardImage").setAttribute('src', "images/"+e.target.innerHTML+".png");
-	/*
-	document.getElementById("demo").innerHTML = "567567576";
-	e.target.innerHTML = "HIIIII";
-	*/
 }
 
 function changeDefOut(e) {
@@ -276,22 +242,6 @@ window.addEventListener('load', (event) => {
     genButtons();
 });
 
-/*
-for (var c in CardDB) {
-	addButton(CardDB[c]["hp"]);
-}
-for (const c of Cards) {
-  const l = c.split(";");
-  addButton(l[0]);
-}
-*/
-/*
-for (const [key, value] of Object.entries(states_dictionary)) {
-	const myArr = str.split(" ");
-	addButton(value)
-  console.log(key, value);
-}
-*/
 function addButton(text) {
 	const btnGroup = document.getElementById('btnGroup');
 
@@ -359,12 +309,6 @@ function removeCard(cardName) {
 
 function requirement(RR) {
 	var r = RR;
-    /*
-	var lastChar = RR[RR.length -1];
-    if (lastChar == "2") {
-    	r = RR.slice(0, -1);
-    }
-    */
 	const btn = document.getElementById(r);
     btn.setAttribute('data', (Number(btn.getAttribute('data'))+1)%3);
     const colors = ['#FF0000','#F8F094','#00FF00']
