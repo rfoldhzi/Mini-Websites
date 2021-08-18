@@ -151,174 +151,184 @@ var CardDB = {
     "Unsanctioned Experiments":{"art":"1irr07JpuFyE6H-Om25dfFd6U0CIgI1t8", "cost":["C"],"time":"1","hp":-1,"icons":[""],"spd":-1,"tct":"-1","res":["C"],"text":"Sacrifice a civilian you control to play a card from your discard pile, paying its cost.","vp":-1,"trait":"Dark","type":"Event","rare":"BLUE"},
     "The Cavalry has arrived":{"art":"1fsR2q25cGBGmBZv57u4P6H0MUQeycTfK", "cost":[""],"time":"2","hp":-1,"icons":[""],"spd":-1,"tct":"-1","res":["M"],"text":"Play when it's your turn to strike. Instead of striking, you may add any number of friendly Cavalry to this front to participate in the engagement.","vp":-1,"trait":"Strategy","type":"Event","rare":"Rare"}
 };
-
 var matchCards = [];
-const ress = {"Wood":"W","Alloy":"A","Gold":"G","Wisdom":"S","Corruption":"C","Meat":"M","Fish":"F","Ice":"I"};
+const ress = {
+	"Wood": "W",
+	"Alloy": "A",
+	"Gold": "G",
+	"Wisdom": "S",
+	"Corruption": "C",
+	"Meat": "M",
+	"Fish": "F",
+	"Ice": "I"
+};
 
 function changeDefOver(e) {
 	const source = CardDB[e.target.name]["art"];
-    document.getElementById("cardImage").setAttribute('src', "images/"+e.target.name+".png");
+	document.getElementById("cardImage").setAttribute('src', "images/" + e.target.name + ".png");
 }
-
 
 function findCards() {
 	var reqs = [];
-    var ban = [];
-    var reqs2 = [];
-    var ban2 = [];
+	var ban = [];
+	var reqs2 = [];
+	var ban2 = [];
 	matchCards = [];
-    for (var r in ress) {
-    	const n = document.getElementById(r).data;
-        const n2 = document.getElementById(r+"2").data;
-        if (n == 0) {
-        	ban.push(ress[r]);
-        } else if (n == 2) {
-        	reqs.push(ress[r]);
-        }
-        if (n2 == 0) {
-        	ban2.push(ress[r]);
-        } else if (n2 == 2) {
-        	reqs2.push(ress[r]);
-        }
-    }
+	for (var r in ress) {
+		const n = document.getElementById(r).data;
+		const n2 = document.getElementById(r + "2").data;
+		if (n == 0) {
+			ban.push(ress[r]);
+		} else if (n == 2) {
+			reqs.push(ress[r]);
+		}
+		if (n2 == 0) {
+			ban2.push(ress[r]);
+		} else if (n2 == 2) {
+			reqs2.push(ress[r]);
+		}
+	}
 
 	for (var c in CardDB) {
-    	var good = true;
+		var good = true;
 		for (var re of reqs) {
-        	if (!CardDB[c]["cost"].includes(re)) {
-            	good = false;
-            }
-        }
-        for (var re of ban) {
-        	if (CardDB[c]["cost"].includes(re)) {
-            	good = false;
-            }
-        }
-        for (var re of reqs2) {
-        	if (!CardDB[c]["res"].includes(re)) {
-            	good = false;
-            }
-        }
-        for (var re of ban2) {
-        	if (CardDB[c]["res"].includes(re)) {
-            	good = false;
-            }
-        }
-        if (!ArtCards.includes(c)) {
-        	good = false;
-        }
-        if (good) {
-        	matchCards.push(c);
-        }
+			if (!CardDB[c]["cost"].includes(re)) {
+				good = false;
+			}
+		}
+		for (var re of ban) {
+			if (CardDB[c]["cost"].includes(re)) {
+				good = false;
+			}
+		}
+		for (var re of reqs2) {
+			if (!CardDB[c]["res"].includes(re)) {
+				good = false;
+			}
+		}
+		for (var re of ban2) {
+			if (CardDB[c]["res"].includes(re)) {
+				good = false;
+			}
+		}
+		if (!ArtCards.includes(c)) {
+			good = false;
+		}
+		if (good) {
+			matchCards.push(c);
+		}
 	}
 }
 
 function genButtons() {
 	for (const c of matchCards) {
-	  	addButton(c);
+		addButton(c);
 	}
 }
+
 function CountCards() {
 	var elements = document.getElementsByClassName("cardbtn");
-    var count = 0;
-    for (var i = 0; i < elements.length; i++) {
-    	count+= Number(elements[i].count);
+	var count = 0;
+	for (var i = 0; i < elements.length; i++) {
+		count += Number(elements[i].count);
 	}
-    document.getElementById("deckCount").innerHTML = "_Deck_ "+count+"/60";
+	document.getElementById("deckCount").innerHTML = "_Deck_ " + count + "/60";
 }
 
 function initCriteriaButtons() {
 	var elements = document.getElementsByClassName("buttonStyle");
 	for (var i = 0; i < elements.length; i++) {
-	    elements[i].data = 1;
-	    elements[i].addEventListener('click', requirement, false);
+		elements[i].data = 1;
+		elements[i].addEventListener('click', requirement, false);
 	}
 }
-
-
 
 function addButton(text) {
 	const btnGroup = document.getElementById('btnGroup');
 
 	const btn = document.createElement('button');
-    btn.setAttribute('class', 'button');
-    btn.setAttribute('id', 'button');
-    btn.innerHTML = text;
-    btn.name = text;
-    if (text in CardDB) {
-    	if ("art" in CardDB[text]) {
-        	btn.addEventListener('mouseover', changeDefOver);
-        }
-    }
-	btn.addEventListener("click", function(){
-	    addCard(text);
+	btn.setAttribute('class', 'button');
+	btn.setAttribute('id', 'button');
+	btn.innerHTML = text;
+	btn.name = text;
+	if (text in CardDB) {
+		if ("art" in CardDB[text]) {
+			btn.addEventListener('mouseover', changeDefOver);
+		}
+	}
+	btn.addEventListener("click", function() {
+		addCard(text);
 	}, false);
-    btn.addEventListener('contextmenu',  function(ev) {
-        ev.preventDefault();
-        removeCard(text);
-        return false;
-    }, false);
-    btnGroup.appendChild(btn);
+	btn.addEventListener('contextmenu', function(ev) {
+		ev.preventDefault();
+		removeCard(text);
+		return false;
+	}, false);
+	btnGroup.appendChild(btn);
 }
 
 function addCard(cardName) {
 	const btnGroup = document.getElementById('btnGroup2');
 
-    const existBtn = document.getElementById(cardName+'card');
+	const existBtn = document.getElementById(cardName + 'card');
 
-    if (existBtn) {
-    	const Rarity = {"Common":8, "BLUE":4,"Rare":2};
-    	var NewCount = Math.min(existBtn.count+1, Rarity[CardDB[cardName]["rare"]]);
+	if (existBtn) {
+		const Rarity = {
+			"Common": 8,
+			"BLUE": 4,
+			"Rare": 2
+		};
+		var NewCount = Math.min(existBtn.count + 1, Rarity[CardDB[cardName]["rare"]]);
 
-    	existBtn.count = NewCount;
-        
-        existBtn.innerHTML = cardName+" x"+NewCount;
-    } else {
-        const btn = document.createElement('button');
-        btn.setAttribute('class', 'button cardbtn');
-        btn.setAttribute('id', cardName+'card');
-	btn.count = 1;
-	btn.name = cardName;
-        btn.setAttribute('alt', cardName);
-        btn.setAttribute('onclick', 'addCard(this.getAttribute("alt"))');
-        btn.innerHTML = cardName+" x1";
-        btnGroup.appendChild(btn);
-	btn.addEventListener('mouseover', changeDefOver);
-        btn.addEventListener('contextmenu',  function(ev) {
-            ev.preventDefault();
-            removeCard(this.getAttribute("alt"));
-            return false;
-        }, false);
-        btnGroup.appendChild(btn);
-    }
-    CountCards()
+		existBtn.count = NewCount;
+
+		existBtn.innerHTML = cardName + " x" + NewCount;
+	} else {
+		const btn = document.createElement('button');
+		btn.setAttribute('class', 'button cardbtn');
+		btn.setAttribute('id', cardName + 'card');
+		btn.count = 1;
+		btn.name = cardName;
+		btn.setAttribute('alt', cardName);
+		btn.setAttribute('onclick', 'addCard(this.getAttribute("alt"))');
+		btn.innerHTML = cardName + " x1";
+		btnGroup.appendChild(btn);
+		btn.addEventListener('mouseover', changeDefOver);
+		btn.addEventListener('contextmenu', function(ev) {
+			ev.preventDefault();
+			removeCard(this.getAttribute("alt"));
+			return false;
+		}, false);
+		btnGroup.appendChild(btn);
+	}
+	CountCards()
 }
 
 function removeCard(cardName) {
-	const existBtn = document.getElementById(cardName+'card');
-    if (existBtn) {
-   		existBtn.count -= 1;
-        if (existBtn.count < 1) {
-        	existBtn.remove();
-        } else {
-        	existBtn.innerHTML = existBtn.name+" x"+existBtn.count;
-        }
-   	}
-    CountCards()
+	const existBtn = document.getElementById(cardName + 'card');
+	if (existBtn) {
+		existBtn.count -= 1;
+		if (existBtn.count < 1) {
+			existBtn.remove();
+		} else {
+			existBtn.innerHTML = existBtn.name + " x" + existBtn.count;
+		}
+	}
+	CountCards()
 }
 
 function requirement(event) {
 	const btn = event.currentTarget;
-	btn.data = (btn.data+1)%3;
-    const colors = ['#FF0000','#F8F094','#00FF00']
-	btn.style.background=colors[btn.data];
-    document.getElementById('btnGroup').innerHTML = '';
-    findCards();
-    genButtons();
+	btn.data = (btn.data + 1) % 3;
+	const colors = ['#FF0000', '#F8F094', '#00FF00']
+	btn.style.background = colors[btn.data];
+	document.getElementById('btnGroup').innerHTML = '';
+	findCards();
+	genButtons();
 }
 
 window.addEventListener('load', (event) => {
 	initCriteriaButtons();
-    findCards();
-    genButtons();
+	findCards();
+	genButtons();
 });
