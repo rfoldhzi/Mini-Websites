@@ -258,7 +258,6 @@ function addButton(text) {
 	const btn = document.createElement('button');
     btn.setAttribute('class', 'button');
     btn.setAttribute('id', 'button');
-    btn.setAttribute('onclick', 'addCard(this.innerHTML)');
     btn.innerHTML = text;
     btn.name = text;
     if (text in CardDB) {
@@ -266,6 +265,9 @@ function addButton(text) {
         	btn.addEventListener('mouseover', changeDefOver);
         }
     }
+	btn.addEventListener("click", function(){
+	    addCard(text);
+	}, false);
     btn.addEventListener('contextmenu',  function(ev) {
         ev.preventDefault();
         removeCard(text);
