@@ -233,7 +233,7 @@ function CountCards() {
 	var elements = document.getElementsByClassName("cardbtn");
     var count = 0;
     for (var i = 0; i < elements.length; i++) {
-    	count+= Number(elements[i].getAttribute('data'));
+    	count+= Number(elements[i].count);
 	}
     document.getElementById("deckCount").innerHTML = "_Deck_ "+count+"/60";
 }
@@ -270,16 +270,16 @@ function addCard(cardName) {
 
     if (existBtn) {
     	const Rarity = {"Common":8, "BLUE":4,"Rare":2};
-    	var count = Math.min(Number(existBtn.getAttribute('data'))+1, Rarity[CardDB[cardName]["rare"]]);
+    	var NewCount = Math.min(existBtn.count+1, Rarity[CardDB[cardName]["rare"]]);
 
-    	existBtn.setAttribute('data', count);
+    	existBtn.count = NewCount;
         
-        existBtn.innerHTML = cardName+" x"+existBtn.getAttribute('data');
+        existBtn.innerHTML = cardName+" x"+NewCount;
     } else {
         const btn = document.createElement('button');
         btn.setAttribute('class', 'button cardbtn');
         btn.setAttribute('id', cardName+'card');
-        btn.setAttribute('data', 1);
+	btn.count = 1;
         btn.setAttribute('alt', cardName);
         btn.setAttribute('onclick', 'addCard(this.getAttribute("alt"))');
         btn.innerHTML = cardName+" x1";
@@ -297,11 +297,11 @@ function addCard(cardName) {
 function removeCard(cardName) {
 	const existBtn = document.getElementById(cardName+'card');
     if (existBtn) {
-   		existBtn.setAttribute('data', Number(existBtn.getAttribute('data'))-1);
-        if (existBtn.getAttribute('data') < 1) {
+   		existBtn.count -= 1;
+        if (existBtn.count < 1) {
         	existBtn.remove();
         } else {
-        	existBtn.innerHTML = existBtn.getAttribute("alt")+" x"+existBtn.getAttribute('data');
+        	existBtn.innerHTML = existBtn.getAttribute("alt")+" x"+existBtn.count;
         }
    	}
     CountCards()
