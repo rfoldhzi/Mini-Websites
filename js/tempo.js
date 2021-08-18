@@ -194,7 +194,7 @@ for (var i = 0; i < elements.length; i++) {
 
 function changeDefOver(e) {
 	const source = CardDB[e.target.innerHTML]["art"];
-    document.getElementById("cardImage").setAttribute('src', "https://drive.google.com/uc?export=view&id="+source);
+    document.getElementById("cardImage").setAttribute('src', "images/"+e.target.innerHTML+".png");
 	/*
 	document.getElementById("demo").innerHTML = "567567576";
 	e.target.innerHTML = "HIIIII";
