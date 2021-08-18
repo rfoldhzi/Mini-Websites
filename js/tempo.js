@@ -271,9 +271,11 @@ function CountCards() {
 	}
     document.getElementById("deckCount").innerHTML = "_Deck_ "+count+"/60";
 }
+window.addEventListener('load', (event) => {
+    findCards();
+    genButtons();
+});
 
-findCards();
-genButtons();
 /*
 for (var c in CardDB) {
 	addButton(CardDB[c]["hp"]);
