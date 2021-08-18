@@ -272,9 +272,7 @@ function addButton(text) {
 	btn.innerHTML = text;
 	btn.name = text;
 	if (text in CardDB) {
-		if ("art" in CardDB[text]) {
-			btn.addEventListener('mouseover', changeDefOver);
-		}
+		btn.addEventListener('mouseover', changeDefOver);
 	}
 	btn.addEventListener("click", function() {
 		addCard(text);
