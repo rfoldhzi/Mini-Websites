@@ -179,7 +179,7 @@ var CardDB = {
 };
 
 var matchCards = [];
-const ress = {"Wood":"W","Alloy":"A","Gold":"G","Wisdom":"S","Corruption":"C","Meat":"M","Fish":"F"};
+const ress = {"Wood":"W","Alloy":"A","Gold":"G","Wisdom":"S","Corruption":"C","Meat":"M","Fish":"F","Ice":"I"};
 
 
 var elements = document.getElementsByClassName("button");
