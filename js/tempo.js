@@ -169,6 +169,16 @@ function changeDefOver(e) {
 	document.getElementById("cardImage").setAttribute('src', "images/" + e.target.name + ".png");
 }
 
+function changeResourceNumber() {
+	for (var c in CardDB) {
+		for (var i = 0; i < CardDB[c]["cost"].length; i++) {
+			if (CardDB[c]["cost"][i].length > 1) {
+				CardDB[c]["cost"][i]CardDB[c]["cost"][i].slice(-1);
+			}
+		}
+	}
+}
+
 function findCards() {
 	var reqs = [];
 	var ban = [];
@@ -405,4 +415,5 @@ window.addEventListener('load', (event) => {
 	genButtons();
 	copyButtonInit();
 	collapseBtnInit();
+	changeResourceNumber();
 });
