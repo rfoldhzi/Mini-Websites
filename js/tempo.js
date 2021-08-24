@@ -409,6 +409,44 @@ function copyToClipboard(text) {
     }
 }
 
+function checkForRes(card, res) {
+	return card.search(res) > -1;
+}
+
+function makeCounts(Cards) {
+	var counts = [];
+	for (var ii = 0; ii < res.length; ii++) {
+		for (var jj = 0; jj < 2 ** ii; jj++) {
+			var count = 0;
+			var code = [res[ii]];
+			for (var kk = 0; kk < ii; kk++) {
+				if (jj % (2 ** (kk + 1)) >= 2 ** kk) {
+					code.push(res[kk]);
+				}
+			}
+			console.log("the code" + code)
+			for (var cc of Cards) {
+				if (checkForRes(cc, res[ii])) {
+					var good = true;
+					for (var kk = 0; kk < ii; kk++) {
+						if ((jj % (2 ** (kk + 1)) >= 2 ** kk ? 1 : 0) == (checkForRes(cc, res[kk]) ? 1 : 0)) {
+							console.log("it is good " + res[ii])
+						} else {
+							console.log("it is bad " + res[ii])
+							good = false;
+						}
+					}
+					if (good) {
+						count++;
+					}
+				}
+			}
+			counts.push(count);
+		}
+	}
+	return counts;
+}
+
 window.addEventListener('load', (event) => {
 	initCriteriaButtons();
 	findCards();
@@ -417,3 +455,5 @@ window.addEventListener('load', (event) => {
 	collapseBtnInit();
 	changeResourceNumber();
 });
+
+
