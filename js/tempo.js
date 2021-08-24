@@ -447,6 +447,24 @@ function makeCounts(Cards) {
 	return counts;
 }
 
+function makeBounds(counts) {
+    var values = [];
+	for (var ii = 0; ii < res.length; ii++) {
+        var nxt = [];
+        for (var jj = 0; jj < 2 ** ii; jj++) {
+            n = 2**ii - 1 + jj
+            if (ii == 0) {
+                nxt.push([0,counts[n]])
+			} else {
+                lowerbound = values[ii-1][Math.floor(jj/2)][jj%2];
+                nxt.push([lowerbound,lowerbound+counts[n]]);
+			}
+		}
+		values.push(nxt);
+	}
+    return values
+}
+
 window.addEventListener('load', (event) => {
 	initCriteriaButtons();
 	findCards();
