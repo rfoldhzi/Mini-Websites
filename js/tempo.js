@@ -1,3 +1,10 @@
+var canvas = null;
+var ctx = null;
+
+const res = ["W","A","G","S"];
+const Cards = ["W","W","W","W","W","W","W","W","W","W","W","AW","AW","AW","AW","AW","AW","AW","AW","A","A","A","A","A","A","A","A","A","WAG","WAG","WG","WG","WG","WG","AG","G","G","G","G","G","S","WS","WAGS","WS","WAS","WAS","WAS"];
+
+
 const ArtCards = ['Soldier', 'Knight', 'Capital', 'Barbarian', 'Peasant', 'Horse Rider', 'King', 'Archer', 'Bandit', 'Prince', 'Rogue', 'Farmer', 'Catapult', 'Mine', 'Mill', 'Market', 'Guard', 'Defender', 'Raider', 'Hunter', 'Marksman', 'Cow', 'Pig', 'Bank', 'Lumber Yard', 'Warehouse', 'Messenger', 'Royal Guard', 'Guard Captain', 'Royal Knight', 'Angry Mob', 'Jester', 'Book', 'Well Prepared', 'Surprise Attack', 'Builder', 'Dragon', 'Rooster', 'Sentry', 'Expert Archer', 'Knight Officer', 'War Hero', 'Flaming Archer', 'Coward', 'Dark Knight', 'Dark King', 'Moat', 'Recruit', 'Dark Alliance', 'Log Trap', 'Knife', 'Angry Farmer', 'Dark Soldier', 'Blacksmith', 'Sword', 'Heater Shield', 'Anvil', 'Crown', 'Front Focused', 'Raging Flames', 'Warning Horn', 'Brawler', 'Winter Soldier', 'Frost Knight', 'Ice Archer', 'Snowman', 'Ice King', 'Plague', 'Rest and Recovery', 'Standoff', 'Snowball', 'Flock', 'Doctor', 'Soldier Squadron', 'Double Cross', 'Two Steps Ahead', 'Bribe', 'Confusion', 'Fear', 'Testudo Formation', 'Warhorn', 'Black Death', 'Hourglass', 'Rally', 'Captain', 'Salmon', 'Giant', 'Regicide', 'Revolution!', 'Decisive Victory', 'Book of Nobility', 'Informant', 'Rumors', 'Snow Bandit', 'Noble Sacrifice', 'Fight Me', 'Disruption', 'Crow', 'Astrolabe', 'Heavy Rain', 'Cloak', 'Rebel', 'Poison', 'Rat', 'Nightmares', 'Dreams', 'Horse', 'Exhaustion', 'Unsanctioned Experiments', 'The Cavalry has arrived', 'George, the Soldier of Legend', 'James, Archer', 'Larry, Bandit'];
 
 var CardDB = {
@@ -382,6 +389,7 @@ function makeDeckString() {
 	setTimeout(function(){
 		document.getElementById('CopyBtn').innerHTML = "Copy Deck";
 	}, 2500); 
+	makeRectangles(makeBounds(makeCounts(Cards)));
 }
 //Source: https://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript
 function copyToClipboard(text) {
@@ -465,6 +473,20 @@ function makeBounds(counts) {
     return values
 }
 
+function rect(x1,y,x2, color) {
+	ctx.fillStyle = color;
+	ctx.fillRect(x1, y, x2-x1, 10);
+}
+
+function makeRectangles(values){
+	const oneCardLength = canvas.width/60;
+    for (var ii = 0; ii < values.length; ii++){
+		for (vv of values[ii]) {
+			rect(vv[0]*oneCardLength,ii*15, vv[1]*oneCardLength,"#FF0000");
+		}
+	}
+}
+
 window.addEventListener('load', (event) => {
 	initCriteriaButtons();
 	findCards();
@@ -472,6 +494,8 @@ window.addEventListener('load', (event) => {
 	copyButtonInit();
 	collapseBtnInit();
 	changeResourceNumber();
+	canvas = document.getElementById("myCanvas");
+	ctx = canvas.getContext('2d');
 });
 
 
