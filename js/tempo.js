@@ -272,6 +272,39 @@ function CountCards() {
 	document.getElementById("deckCount").innerHTML = "_Deck_ " + count + "/60";
 }
 
+
+function findResources() {
+	var res = {}
+	var elements = document.getElementsByClassName("cardbtn");
+	for (var ii = 0; ii < elements.length; ii++) {
+		var cardName = elements[ii].name;
+		for (rr of CardDB[cardName]["res"]) {
+			//console.log("rr ",rr," stringify json ",JSON.stringify(res)," rr in res ",rr in res)
+			//document.getElementById("deckCount").innerHTML = rr;
+			if (rr in res) {
+				res[rr] += elements[ii].count;
+			} else {
+				res[rr] = elements[ii].count;
+			}
+		}
+	}
+	//document.getElementById("deckCount").innerHTML = JSON.stringify(res);
+	var keyValues = []
+	for (var key in res) {
+		keyValues.push([ key, res[key] ])
+	}
+	//document.getElementById("deckCount").innerHTML = keyValues.length;
+	keyValues.sort(function compare(kv1, kv2) {
+		return kv2[1] - kv1[1]
+	})
+	//document.getElementById("deckCount").innerHTML = keyValues;
+	for (var ii = 0; ii < keyValues.length; ii++) {
+		keyValues[ii] = keyValues[ii][0];
+	}
+	document.getElementById("deckCount").innerHTML = JSON.stringify(keyValues);
+	return keyValues;
+}
+
 function initCriteriaButtons() {
 	var elements = document.getElementsByClassName("reqBtn");
 	for (var i = 0; i < elements.length; i++) {
@@ -389,7 +422,14 @@ function makeDeckString() {
 	setTimeout(function(){
 		document.getElementById('CopyBtn').innerHTML = "Copy Deck";
 	}, 2500); 
-	makeRectangles(makeBounds(makeCounts(Cards)));
+	var res = findResources();
+	var deckList = [];
+	for (var ii = 0; ii < elements.length; ii++) {
+		for (var jj = 0; jj < elements[ii].count; jj++) {
+			deckList.push(elements[ii].name);
+		}
+	}
+	makeRectangles(makeBounds(makeCounts(deckList,res),res),res,deckList);
 }
 //Source: https://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript
 function copyToClipboard(text) {
@@ -418,10 +458,11 @@ function copyToClipboard(text) {
 }
 
 function checkForRes(card, res) {
-	return card.search(res) > -1;
+	return CardDB[card]["res"].includes(res);
 }
 
-function makeCounts(Cards) {
+function makeCounts(Cards,res) {
+	console.log("Making the counst",JSON.stringify(res),JSON.stringify(Cards));
 	var counts = [];
 	for (var ii = 0; ii < res.length; ii++) {
 		for (var jj = 0; jj < 2 ** ii; jj++) {
@@ -452,10 +493,11 @@ function makeCounts(Cards) {
 			counts.push(count);
 		}
 	}
+	console.log("Return counst now",counts)
 	return counts;
 }
 
-function makeBounds(counts) {
+function makeBounds(counts,res) {
     var values = [];
 	for (var ii = 0; ii < res.length; ii++) {
         var nxt = [];
@@ -470,6 +512,7 @@ function makeBounds(counts) {
 		}
 		values.push(nxt);
 	}
+	console.log("Bounds are made")
     return values
 }
 
@@ -478,11 +521,23 @@ function rect(x1,y,x2, color) {
 	ctx.fillRect(x1, y, x2-x1, 10);
 }
 
-function makeRectangles(values){
-	const oneCardLength = canvas.width/60;
+const ResourceColors = {
+	"W":"#62a043",
+	"A":"#cccccc",
+	"G":"#ffbf00",
+	"S":"#5900b2",
+	"C":"#2f5a7d",
+	"M":"#8e0404",
+	"F":"#00bfff",
+	"I":"#99ffff",
+};
+
+function makeRectangles(values,res,cards){
+	console.log("Making the rexts",JSON.stringify(values));
+	const oneCardLength = canvas.width/cards.length;
     for (var ii = 0; ii < values.length; ii++){
 		for (vv of values[ii]) {
-			rect(vv[0]*oneCardLength,ii*15, vv[1]*oneCardLength,"#FF0000");
+			rect(vv[0]*oneCardLength,ii*15, vv[1]*oneCardLength,ResourceColors[res[ii]]);
 		}
 	}
 }
