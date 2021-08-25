@@ -461,10 +461,40 @@ function checkForRes(card, res) {
 	return CardDB[card]["res"].includes(res);
 }
 
+function rearrange(addToCounts) {
+	console.log(addToCounts);
+	addToCounts.reverse();
+	var newList = new Array(addToCounts.length);
+	for (var ii = 0; ii < addToCounts.length; ii++) {
+		if (ii == 0) {
+			newList[0] = addToCounts[0][0];
+			newList[newList.length - 1] = addToCounts[addToCounts.length - 1][0];
+		} else if (!newList[ii]) {
+			const length = addToCounts[ii][1].length;
+			const first = ii;
+			var second = false;
+			for (var jj = addToCounts.length-1; jj > ii; jj--) {
+				if (!newList[jj] && addToCounts[jj][1].length == length) {
+					second = jj;
+					break;
+				}
+			}
+			if (second) {
+				newList[first] = addToCounts[second][0];
+				newList[second] = addToCounts[first][0];
+			} else {
+				newList[first] = addToCounts[first][0];
+			}
+		}
+	}
+	return newList;
+  }
+
 function makeCounts(Cards,res) {
 	console.log("Making the counst",JSON.stringify(res),JSON.stringify(Cards));
 	var counts = [];
 	for (var ii = 0; ii < res.length; ii++) {
+		var addToCounts = [];
 		for (var jj = 0; jj < 2 ** ii; jj++) {
 			var count = 0;
 			var code = [res[ii]];
@@ -490,10 +520,11 @@ function makeCounts(Cards,res) {
 					}
 				}
 			}
-			counts.push(count);
+			addToCounts.push([count,code]);
 		}
+		counts = counts.concat(rearrange(addToCounts));
 	}
-	console.log("Return counst now",counts)
+	console.log("Return counst now",counts);
 	return counts;
 }
 
