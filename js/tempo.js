@@ -429,6 +429,7 @@ function makeDeckString() {
 			deckList.push(elements[ii].name);
 		}
 	}
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	makeRectangles(makeBounds(makeCounts(deckList,res),res),res,deckList);
 }
 //Source: https://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript
