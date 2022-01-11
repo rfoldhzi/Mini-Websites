@@ -1,0 +1,326 @@
+---
+layout: default
+title: Area Under the Curve
+---
+
+<!DOCTYPE html>
+<html>
+<head>
+<script src="math.js" type="text/javascript"></script>
+
+<link rel="shortcut icon" href="/static/favicon.ico">
+<!--
+<link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+!-->
+
+<title>Trapezoidal Sum Calculator</title>
+</head>
+<body bgcolor="c6dcff">
+
+<p>Use the text boxes to either insert points or an equation with endpoints and a number of trapazoids to use.</p>
+<div id="X points">
+x: <input type="text" id="X1" size="1">
+<input type="text" id="X2" size="1">
+</div>
+<div id="Y points">
+y: <input type="text" id="Y1" size="1">
+<input type="text" id="Y2" size="1">
+</div>
+<div>
+Equation:<input type="text" id="Equation" size="20">
+</div>
+<div>
+End Points:<input type="text" id="Xend1" size="1"><input type="text" id="Xend2" size="1">
+</div>
+<div>
+Trapazoids:<input type="text" id="Trapazoids" size="1">
+</div>
+
+<p>Click Calculate to find the estimation using the points. Use Calculate Equation to find the estimate using the equation.</p>
+
+<button type="button" onclick="THING()">Add point</button>
+<button type="button" onclick="TrapazoidSum()">Calculate</button>
+<button type="button" onclick="TrapazoidSumEquation()">Calculate Equation</button>
+
+<p id="demo"></p>
+
+<canvas id="myCanvas" width="500" height="400"
+style="border:1px solid #c3c3c3;">
+Your browser does not support the canvas element.
+</canvas>
+<!--
+<script>
+var canvas = document.getElementById("myCanvas");
+var ctx = canvas.getContext("2d");
+ctx.fillStyle = "#FF9000";
+ctx.fillRect(0,0,500,300);
+function DrawRectangle(x1,y1,x2,y2) {
+	var canvas = document.getElementById("myCanvas");
+    var ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#FF9000";
+    ctx.fillRect(x1,y1,x2,y2);
+}
+DrawRectangle(0,300,500,0);
+</script>
+-->
+<script>
+function myFunction() {
+  var x = document.getElementById("myText");
+  var defaultVal = x.defaultValue;
+  var currentVal = x.value;
+
+  if (defaultVal == currentVal) {
+    document.getElementById("demo").innerHTML = "Default value and current value is the same: "
+    + x.defaultValue + " and " + x.value
+    + "<br>Change the value of the text field to see the difference!";
+  } else {
+    document.getElementById("demo").innerHTML = "The default value was: " + defaultVal
+    + "<br>The new, current value is: " + currentVal;
+  }
+}
+var counter = 3
+function THING() {
+	var div = document.createElement("input");
+	div.setAttribute('id', 'X'+counter.toString());
+	div.setAttribute('type', 'text');
+    div.setAttribute('size', '1');
+	document.getElementById("X points").appendChild(div);
+    var div2 = document.createElement("input");
+	div2.setAttribute('id', 'Y'+counter.toString());
+	div2.setAttribute('type', 'text');
+    div2.setAttribute('size', '1');
+	document.getElementById("Y points").appendChild(div2);
+    counter = counter+1;
+    document.getElementById("demo").innerHTML = 'Y'+counter.toString();
+}
+
+
+var Rvalue = Math.floor(Math.random() * 256)
+var Gvalue = Math.floor(Math.random() * 256)
+var Bvalue = Math.floor(Math.random() * 256)
+
+function ResetColor() {
+    Rvalue = Math.floor(Math.random() * 256)
+    Gvalue = Math.floor(Math.random() * 256)
+    Bvalue = Math.floor(Math.random() * 256)
+}
+
+function getRandomColor() {
+  var letters = '0123456789ABCDEF';
+  var color = '#';
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
+function getRandomColorWeighted() {
+	var r = Math.max(0,Math.min(Rvalue-30+Math.floor(Math.random() * 60),255));
+    var g = Math.max(0,Math.min(Gvalue-30+Math.floor(Math.random() * 60),255));
+    var b = Math.max(0,Math.min(Bvalue-30+Math.floor(Math.random() * 60),255));
+  	return '#'+r.toString(16)+g.toString(16)+b.toString(16);
+}
+
+function DrawLine(x1,y1,x2,y2) {
+	var canvas = document.getElementById("myCanvas");
+	var ctx = canvas.getContext("2d");
+	ctx.moveTo(x1,y1);
+	ctx.lineTo(x2,y2);
+	ctx.stroke();
+}
+
+function DrawRectangle(x1,y1,x2,y2) {
+	var canvas = document.getElementById("myCanvas");
+    var ctx = canvas.getContext("2d");
+    ctx.fillStyle = getRandomColor();//"#FF9000";
+    ctx.fillRect(x1,y1,x2,y2);
+}
+
+var d = {"Sin":'Math.sin',"Cos":'Math.cos',"Tan":'Math.tan',"^":'**'};
+function Translation(eq) {
+    var equation = eq;
+    for (var key in d) {
+        var i = 0;
+        while (equation.includes(key)||i>10) {
+            equation = equation.replace(key,d[key]);
+            i++;
+        }
+    }
+    return equation
+}
+
+function DrawTriangle(x1,y1,x2,y2,x3,y3) {
+	var canvasElement = document.querySelector("#myCanvas");
+    var context = canvasElement.getContext("2d");
+
+    // the triangle
+    context.beginPath();
+    context.moveTo(x1,y1);
+    context.lineTo(x2,y2);
+    context.lineTo(x3,y3);
+    context.closePath();
+    `
+    // the outline
+    context.lineWidth = 2;
+    context.strokeStyle = '#666666';
+    context.stroke();
+    `
+    // the fill color
+    context.fillStyle = "#FFCC00";
+    context.fill();
+}
+function DrawQuad(x1,y1,x2,y2,x3,y3,x4,y4) {
+	var canvasElement = document.querySelector("#myCanvas");
+    var context = canvasElement.getContext("2d");
+
+    // the triangle
+    context.beginPath();
+    context.moveTo(x1,y1);
+    context.lineTo(x2,y2);
+    context.lineTo(x3,y3);
+    context.lineTo(x4,y4);
+    context.closePath();
+    `
+    // the outline
+    context.lineWidth = 2;
+    context.strokeStyle = '#666666';
+    context.stroke();
+    `
+    // the fill color
+    context.fillStyle = getRandomColor();
+    context.fill();
+}
+DrawQuad(50,50,100,100,60,20,80,300)
+
+function DrawChart(L) {
+	var canvas = document.getElementById("myCanvas");
+	const context = canvas.getContext('2d');
+
+	context.clearRect(0, 0, canvas.width, canvas.height);
+	var MaxY = 0;
+    var MaxX = 0;
+    var MinX = L[0][0];
+    var MinY = 0;
+	for (var i in L) {//Find Max/Min
+        var v = L[i];
+        if (v[0] > MaxX) {
+        	MaxX = v[0];
+        }
+        if (v[0] < MinX) {
+        	MinX = v[0];
+        }
+        if (v[1] > MaxY) {
+        	MaxY = v[1];
+        }
+        if (v[1] < MinY) {
+        	MinY = v[1];
+        }
+    }
+    //Translate
+    for (var i in L) {
+    	L[i] = [500*((L[i][0]-MinX)/(MaxX-MinX)),(400*((L[i][1]-MinY)/(MaxY-MinY)))]
+    }
+    var ZERO = 400*(1+(MinY/(MaxY-MinY)))
+    //These two 'for's create the grid lines
+    for (var i = 0; i < MaxY-MinY; i++) {
+    	DrawLine(0,i*400/(MaxY-MinY),500,i*400/(MaxY-MinY));
+    	//DrawLine(0,(MaxY-i)*400/MaxY,500,(MaxY-i)*400/MaxY);
+  	}
+    for (var i = 0; i < MaxX-MinX; i++) {
+    	DrawLine(i*500/(MaxX-MinX),0,i*500/(MaxX-MinX),400);
+  	}
+    //The L is created and translated, now draw the chart
+    for (var i in L) {
+    	if (i!=0) {
+
+        	var a = L[i-1];
+            var b = L[i];
+            DrawQuad(a[0],ZERO,a[0],400-a[1],b[0],400-b[1],b[0],ZERO);
+        }
+    }
+}
+
+DrawRectangle(0,300,500,0);
+
+
+function TrapazoidSum() {
+	ResetColor();
+	var New = [];
+	for (I = 1; I < counter; I++) { 	New.push([Number(document.getElementById('X'+I.toString()).value),Number(document.getElementById('Y'+I.toString()).value)]);
+    }
+  	L = New.sort(function(a,b) {
+  	  last = a[0];
+  	  next = b[0];
+  	  return last < next ? -1 : 1;
+  	});
+    document.getElementById("demo").innerHTML = L;
+
+	var Area = 0;
+    var l = [];
+    document.getElementById("demo").innerHTML = Area;
+	for (var i in L) {
+    	if (i!=0) {
+        	var a = L[i-1]
+            var b = L[i]
+            Area = Area + Math.abs(b[0]-a[0])*(a[1]+b[1])/2
+        }
+    }
+    document.getElementById("demo").innerHTML = Area;
+    DrawChart(L);
+}
+
+function TrapazoidSumEquation() {
+	ResetColor();
+    document.getElementById("demo").innerHTML = "Cannot calculate equation";
+	var New = [];
+    var Traps = Number(document.getElementById('Trapazoids').value);
+    var Start = Number(document.getElementById('Xend1').value);
+    var End = Number(document.getElementById('Xend2').value);
+    var p = [];
+    var equation = Translation(document.getElementById('Equation').value);
+
+	for (I = 0; I < Traps; I++) {
+ 	var x = I*((End-Start)/Traps)+Start;
+	p.push(x);	New.push([x,Number(eval(equation))]);
+    }
+    var x = End;  New.push([x,Number(eval(equation))]);
+
+  	L = New.sort(function(a,b) {
+  	  last = a[0];
+  	  next = b[0];
+  	  return last < next ? -1 : 1;
+  	});
+
+	var Area = 0;
+    var l = [];
+
+	for (var i in L) {
+    	if (i!=0) {
+        	var a = L[i-1]
+            var b = L[i]
+            Area = Area + Math.abs(b[0]-a[0])*(a[1]+b[1])
+        }
+    }
+    Area = Area/2
+    document.getElementById("demo").innerHTML = Area;
+    DrawChart(L);
+}
+
+for (var i in list) {
+	var v = list[i];
+	//v.addEventListener('click', changeColor(v), false)
+	//v.style.backgroundColor = "#0BF003";
+}
+
+
+</script>
+
+</body>
+</html>
+
