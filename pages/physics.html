@@ -1,0 +1,414 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>
+        Angular Momentum
+    </title>
+</head>
+
+<body>
+
+<div>
+Person Mass (kg):<input type="text" id="PM" size="5" value="60">
+</div>
+<div>
+Person Radius (m):<input type="text" id="PR" size="5" value=".3">
+</div>
+<div>
+Blocks' distance (m):<input type="text" id="BR" size="5" value=".9">
+</div>
+<div>
+Block's mass (kg per block):<input type="text" id="BM" size="5" value="5">
+</div>
+<div>
+Angular Velocity (per degree/sec):<input type="text" id="AC" size="5" value="30">
+</div>
+<button type="button" onclick="release()">Release!</button>
+<button type="button" onclick="reset()">Reset</button>
+<div>
+Drop Height (m):<input type="text" id="DH" size="5" value="1">
+</div>
+<p id="test">hi</p>
+
+<canvas id="myCanvas" width="400" height="400" style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML5 canvas tag.</canvas>
+
+<canvas id="sideView" width="400" height="400" style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML5 canvas tag.</canvas>
+
+<p>This is all about angular momentum. When each value is changed, the angular velocity is adjusted to maintain angular momentum. </p>
+
+<p>The weights travel in a circular motion around the person. The rods pull on the weights towards the person, applying a force towards the center. The velocity of the blocks is tangential to its circle of motion. </p>
+
+<p>When the weights are released, they maintain angular momentum by traveling in a straight line forward from their point of release. When they are released, they become projectiles, and continue traveling with it’s previous linear momentum until it collides with the ground. When it hits the ground, the friction of the ground removes all of its horizontal momentum, as friction is an external force.
+</p>
+
+<p>As you can see in the second view of the object, the weights follow a simple cosine wave traveling around the object. This is a form of simple harmonic motion, as they follow a sinusoidal wave.
+</p>
+
+<script>
+var canvas = document.getElementById("myCanvas");
+const ctx = canvas.getContext('2d');
+
+var canvas2 = document.getElementById("sideView");
+const ctx2 = canvas2.getContext('2d');
+
+//var ctx = c.getContext("2d");
+//ctx.rotate(0 * Math.PI / 180);
+//ctx.fillRect(50, 20, 100, 50);
+var i = 0;
+
+function drawRotatedRect(x,y,width,height,degrees){
+
+        // first save the untranslated/unrotated context
+        ctx.save();
+
+        ctx.beginPath();
+        // move the rotation point to the center of the rect
+        ctx.translate( x+width/2, y+height/2 );
+        // rotate the rect
+        ctx.rotate(degrees*Math.PI/180);
+
+        // draw the rect on the transformed context
+        // Note: after transforming [0,0] is visually [x,y]
+        //       so the rect needs to be offset accordingly when drawn
+        ctx.rect( -width/2, -height/2, width,height);
+
+        ctx.fillStyle="gold";
+        ctx.fill();
+
+        // restore the context to its untranslated/unrotated state
+        ctx.restore();
+
+    }
+
+function drawRect2(x,y,width,height,fill){
+
+        // first save the untranslated/unrotated context
+        //ctx2.save();
+		ctx2.beginPath();
+        //ctx2.beginPath();
+        // move the rotation point to the center of the rect
+        //ctx2.translate( x+width/2, y+height/2 );
+        // rotate the rect
+        //ctx2.rotate(degrees*Math.PI/180);
+        ctx2.lineWidth = "0";
+		ctx2.rect(x - width/2,y-height/2,width,height);
+        // draw the rect on the transformed context
+        // Note: after transforming [0,0] is visually [x,y]
+        //       so the rect needs to be offset accordingly when drawn
+        //ctx2.rect( -width/2, -height/2, width,height);
+		//ctx2.lineWidth = "0";
+        ctx2.fillStyle=fill;
+        ctx2.fill();
+
+		ctx2.stroke();
+        // restore the context to its untranslated/unrotated state
+        //ctx2.restore();
+
+    }
+
+function drawRect2coord(x1,x2,y,height,fill){
+
+        // first save the untranslated/unrotated context
+        //ctx2.save();
+		ctx2.beginPath();
+        //ctx2.beginPath();
+        // move the rotation point to the center of the rect
+        //ctx2.translate( x+width/2, y+height/2 );
+        // rotate the rect
+        //ctx2.rotate(degrees*Math.PI/180);
+        ctx2.lineWidth = "0";
+		ctx2.rect(x1,y-height/2,x2-x1,height);
+        // draw the rect on the transformed context
+        // Note: after transforming [0,0] is visually [x,y]
+        //       so the rect needs to be offset accordingly when drawn
+        //ctx2.rect( -width/2, -height/2, width,height);
+		//ctx2.lineWidth = "0";
+        ctx2.fillStyle=fill;
+        ctx2.fill();
+
+		ctx2.stroke();
+        // restore the context to its untranslated/unrotated state
+        //ctx2.restore();
+
+    }
+
+
+function drawCircle(x, y, radius, fill, stroke, strokeWidth) {
+  ctx.beginPath()
+  ctx.arc(x, y, radius, 0, 2 * Math.PI, false)
+  if (fill) {
+    ctx.fillStyle = fill
+    ctx.fill()
+  }
+  if (stroke) {
+    ctx.lineWidth = strokeWidth
+    ctx.strokeStyle = stroke
+    ctx.stroke()
+  }
+}
+
+
+function thing() {
+	var ctx = c.getContext("2d");
+	ctx.rotate(i * Math.PI / 180);
+	ctx.fillRect(50, 20, 100, 50);
+    i=i+1;
+}
+
+var pr = .3;
+var pm = 60;
+var br = .9;
+var bm = 5;
+var ac = 30;
+
+var Main = setInterval(mainLoop, 100);
+
+function mainLoop(){
+
+    var PR = Number(document.getElementById('PR').value);
+    var PM = Number(document.getElementById('PM').value);
+    var BR = Number(document.getElementById('BR').value);
+    var BM = Number(document.getElementById('BM').value);
+    var AC = Number(document.getElementById('AC').value);
+    var DH = Number(document.getElementById('DH').value);
+
+    if (isNaN(PR) || isNaN(PM)|| isNaN(BR) || isNaN(BM)) {
+    	return;
+    }
+    if (PM == 0 && BM == 0) {
+    	return;
+    }
+
+    //document.getElementById("test").innerHTML = "begun";
+    if (PR !== pr || PM !== pm || BR !== br || BM !== bm || AC !== ac) {
+    //document.getElementById("test").innerHTML = "IN";
+    	if (AC === ac) {
+          	var MoI = .5*pm*pr*pr + bm*br*br;
+          	var MoI2 = .5*PM*PR*PR + BM*BR*BR;
+          	ac = ac*MoI/MoI2;
+            document.getElementById('AC').value = ac;
+            //document.getElementById("test").innerHTML = "1111";
+
+        } else {
+        	ac = AC
+            //document.getElementById("test").innerHTML = "2222";
+        }
+        pr = PR;
+        pm = PM;
+        br = BR;
+        bm = BM;
+    }
+
+
+
+    var RectX = 10;
+    var RectY = BR*200;
+    var Radius = PR*100;
+    var Radius2 = Math.sqrt(BM)*4.47;
+
+    var x = 150;
+    var y = 150-RectY/2;
+    var Y = 150;
+
+    var Radians = (i+90)*Math.PI/180;
+    var Radians2 = (i-90)*Math.PI/180;
+
+    var Circle1X = Math.cos(Radians)*RectY/2 + x + RectX/2;
+    var Circle1Y = Math.sin(Radians)*RectY/2 + y + RectY/2;
+
+    var Circle2X = Math.cos(Radians2)*RectY/2 + x + RectX/2;
+    var Circle2Y = Math.sin(Radians2)*RectY/2 + y + RectY/2;
+
+	var Height = DH*100+50
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+    drawRotatedRect(x,y,RectX,RectY,i)
+    drawCircle(x+RectX/2,y+RectY/2,Radius,'#FF0000','#FF0000',0)
+    drawCircle(Circle1X,Circle1Y,Radius2,'#000000','#000000',0,"#000000")
+    drawCircle(Circle2X,Circle2Y,Radius2,'#000000','#000000',0,"#000000")
+
+
+    var flip = 1;
+
+    if ((i+90) % 360 < 180) {
+    	flip = -1
+    }
+
+    drawRect2coord(x+flip*RectY*Math.cos(Radians)/2, x+flip*Radius*Math.cos(Radians),Y,10,"gold")
+    drawRect2(x+flip*RectY*Math.cos(Radians)/2,Y,Radius2*2,Radius2*2,"#000000")
+
+    //drawRect2(x-RectY*Math.cos(Radians)/4,y,RectY*Math.cos(Radians)/2,10)
+    drawRect2(x,Y+Height/2-50,Radius*2,Height,"#FF0000")
+    //drawRect2(x+RectY*Math.cos(Radians)/4,y,RectY*Math.cos(Radians)/2,10)
+
+
+
+    drawRect2coord(x-flip*RectY*Math.cos(Radians)/2, x-flip*Radius*Math.cos(Radians),Y,10,"gold")
+    /*
+    if (Math.abs(RectY*Math.cos(Radians)/2 - Radius*Math.cos(Radians)) < 10) {
+    	drawRect2(x-flip*(RectY*Math.cos(Radians)/2+Radius*Math.cos(Radians))/2,Y,10,10,"gold")
+    }
+    */
+    drawRect2(x-flip*RectY*Math.cos(Radians)/2,Y,Radius2*2,Radius2*2,"#000000")
+
+    drawRect2(x,Y+Height-50+10,400,20,"#777777")
+    //ctx.translate( 50+100/2, 20+50/2 );
+	//ctx.rotate(i * Math.PI / 180);
+	//ctx.fillRect(50, 20, 100, 50);
+    i=i+ac/10;
+}
+
+var released = false;
+
+function reset(){
+	released = false;
+}
+
+function release() {
+document.getElementById('test').innerHTML = "11";
+
+    if (released) {
+    	return;
+    }
+    released = true;
+
+	clearInterval(Main);
+	var PR = Number(document.getElementById('PR').value);
+    var PM = Number(document.getElementById('PM').value);
+    var BR = Number(document.getElementById('BR').value);
+    var BM = Number(document.getElementById('BM').value);
+    var AC = Number(document.getElementById('AC').value);
+    var DH = Number(document.getElementById('DH').value);
+
+    var Radians = (i+90)*Math.PI/180;
+    var Radians2 = (i-90)*Math.PI/180;
+
+    var RectX = 10;
+    var RectY = BR*200;
+    var Radius = PR*100;
+    var Radius2 = Math.sqrt(BM)*4.47;
+
+	document.getElementById('test').innerHTML = "22c";
+
+	var x = 150;
+    var y = 150-RectY/2;
+    var Y = 150;
+
+	var Circle1X = Math.cos(Radians)*RectY/2 + x + RectX/2;
+    var Circle1Y = Math.sin(Radians)*RectY/2 + y + RectY/2;
+
+    var Circle2X = Math.cos(Radians2)*RectY/2 + x + RectX/2;
+    var Circle2Y = Math.sin(Radians2)*RectY/2 + y + RectY/2;
+
+    var Height = DH*100+50
+
+    var Velocity = BR*100*Math.PI*AC/180;
+
+    var angle1 = i;
+    var angle2 = i+180;
+
+    var FLIP = 1;
+
+        if ((i+90) % 360 < 180) {
+            FLIP = -1
+        }
+
+    BM = 0
+    var MoI = .5*pm*pr*pr + bm*br*br;
+    var MoI2 = .5*PM*PR*PR + BM*BR*BR;
+    ac = ac*MoI/MoI2;
+    document.getElementById('AC').value = ac;
+    BM = Number(document.getElementById('BM').value);
+
+
+    document.getElementById('test').innerHTML = "3r";
+
+    var vx1 = Math.cos(Radians+Math.PI/2)*Velocity;
+    var vy1 = Math.sin(Radians+Math.PI/2)*Velocity;
+    var vx2 = Math.cos(Radians2+Math.PI/2)*Velocity;
+    var vy2 = Math.sin(Radians2+Math.PI/2)*Velocity;
+
+    var t = 0
+    var fallTime = Math.sqrt(DH*.2)
+    var impact = 10*BM*Math.sqrt(fallTime)
+     document.getElementById('test').value = "HERE";
+     document.getElementById('test').value = t;
+    const interval = setInterval(function() {
+    	var newT = Math.min(t, fallTime);
+    	var PR2 = Number(document.getElementById('PR').value);
+    	var PM2 = Number(document.getElementById('PM').value);
+    	var BR2 = Number(document.getElementById('BR').value);
+    	var BM2 = Number(document.getElementById('BM').value);
+    	var AC2 = Number(document.getElementById('AC').value);
+        if (PR !== PR2 || PM !== PM2 || BR !== BR2 || BM !== BM2 || AC2 !== ac || !released) {
+        	document.getElementById('AC').value = AC;
+        	released = false;
+        	clearInterval(interval);
+            Main = setInterval(mainLoop, 100);
+
+        }
+
+       	var Radians = (i+90)*Math.PI/180;
+
+        var flip = 1;
+
+        if ((i+90) % 360 < 180) {
+            flip = -1
+        }
+
+    //document.getElementById('test').innerHTML = t;
+    	ctx.clearRect(0, 0, canvas.width, canvas.height);
+		ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+        //drawRotatedRect(x,y,RectX,RectY,i)
+        //drawCircle(x+RectX/2,y+RectY/2,Radius,'#FF0000','#FF0000',0)
+
+        //drawRotatedRect(x,y,RectX,RectY,i)
+
+
+ 		if (t>fallTime && t < fallTime+0.9) {
+        	var Color = "666666"
+            var mult = parseInt((t-fallTime)*10);
+            document.getElementById('test').innerHTML = mult;
+            Color = (parseInt(Color, 16) + 0x111111*mult).toString(16);
+        	 drawCircle(Circle1X+newT*vx1,Circle1Y+newT*vy1,Radius2+(t-fallTime)*impact,Color,Color,0)
+             drawCircle(Circle2X+newT*vx2,Circle2Y+newT*vy2,Radius2+(t-fallTime)*impact,Color,Color,0)
+        }
+      drawCircle(Circle1X+newT*vx1,Circle1Y+newT*vy1,Radius2,'#000000','#000000',0)
+        drawCircle(Circle2X+newT*vx2,Circle2Y+newT*vy2,Radius2,'#000000','#000000',0)
+
+        drawRotatedRect(x,y,RectX,RectY,i)
+        drawCircle(x+RectX/2,y+RectY/2,Radius,'#FF0000','#FF0000',0)
+
+        drawRect2coord(x+flip*RectY*Math.cos(Radians)/2, x+flip*Radius*Math.cos(Radians),Y,10,"gold")
+
+
+
+    	drawRect2(x,Y+Height/2-50,Radius*2,Height,"#FF0000")
+
+    	drawRect2coord(x-flip*RectY*Math.cos(Radians)/2, x-flip*Radius*Math.cos(Radians),Y,10,"gold")
+
+        if (t<fallTime) {
+        	drawRect2(Circle1X+newT*vx1,Y+500*t*t,Radius2*2,Radius2*2,"#000000")
+    		drawRect2(Circle2X+newT*vx2,Y+500*t*t,Radius2*2,Radius2*2,"#000000")
+        } else {
+        	drawRect2(Circle1X+newT*vx1,Y+500*fallTime*fallTime-Radius2 ,Radius2*2,Radius2*2,"#000000")
+    		drawRect2(Circle2X+newT*vx2,Y+500*fallTime*fallTime-Radius2 ,Radius2*2,Radius2*2,"#000000")
+        }
+
+        drawRect2(x,Y+Height-50+10,400,20,"#777777")
+
+        t=t+0.1
+        i=i+ac/10;
+ 	}, 100);
+}
+</script>
+
+</body>
+</html>
+
