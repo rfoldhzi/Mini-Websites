@@ -143,6 +143,7 @@ var CardDB = {
     "Malnourishment":{"cost":["M"],"time":"1","hp":-1,"icons":[""],"spd":-1,"tct":"","res":["F"],"text":"Play on an opponent's play area. Opponent's civilian and military units have 1 less health, to a minimum of 1. As an action, this opponent may spend 2 meat or 2 fish to discard this card.","vp":-1,"trait":"","type":"Detriment","rare":"BLUE"},
     "Scarecrow":{"cost":[""],"time":"1","hp":1,"icons":[""],"spd":-1,"tct":"","res":["W"],"text":"The front this card is on cannot be attacked by a single unit (two or more units must attack).","vp":-1,"trait":"","type":"Building","rare":"BLUE"},
 };
+let cardCount = Object.keys(CardDB).length;
 var matchCards = [];
 const ress = {
 	"Wood": "W",
@@ -240,6 +241,10 @@ function findCards() {
 			matchCards.push(c);
 		}
 	}
+    let goodCount = matchCards.length;
+    let selectorCounter = document.getElementById("selectorCounter");
+    console.log(selectorCounter.innerHTML)
+    selectorCounter.innerHTML = "Showing " + goodCount + "/" + cardCount + " cards"
 }
 
 function genButtons() {
