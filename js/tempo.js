@@ -161,6 +161,14 @@ const ress = {
 	"Ice": "I"
 };
 const cardTypes = ["Unit","Building","Event","Upgrade","Detriment","Base"];
+const cardTraits = [
+	"Animal","Aquatic","Attack","Attribute","Beast","Boat",
+	"Book","Burning","Cancel","Cavalry","Chivalry","Civilian",
+	"Court","Dark","Defensive","Disease","Equipment",
+	"Goal","Military","Music","Outlaw","Production","Ranged",
+	"Resource","Royalty","Strategy","Structure","Terrain","Trap",
+	"Vehicle","Viking","Water","Weapon","Winter"
+];
 
 function changeDefOver(e) {
 	const source = CardDB[e.target.name]["art"];
@@ -184,6 +192,8 @@ function findCards() {
 	var ban2 = [];
 	var typeReqs = [];
 	var typeBans = [];
+	let traitRequirements = [];
+	let traitBans = [];
 	matchCards = [];
 	for (var r in ress) {
 		const n = document.getElementById(r).data;
@@ -207,6 +217,15 @@ function findCards() {
 			typeReqs.push(t);
 		}
 	}
+	for (var t of cardTraits) {
+		const n = document.getElementById(t).data;
+		if (n == 0) {
+			traitBans.push(t);
+		} else if (n == 2) {
+			traitRequirements.push(t);
+		}
+	}
+
 	for (var c in CardDB) {
 		var good = true;
 		for (var re of reqs) {
@@ -239,6 +258,20 @@ function findCards() {
 				good = false;
 			}
 		}
+
+		//Trait requirements and bans
+		for (let trait of traitRequirements) {
+			if (!CardDB[c]["trait"].includes(trait)) {
+				good = false;
+			}
+		}
+		for (let trait of traitBans) {
+			if (CardDB[c]["trait"].includes(trait)) {
+				good = false;
+			}
+		}
+
+
 		// if (!ArtCards.includes(c)) {
 		// 	good = false;
 		// }
@@ -264,12 +297,31 @@ function CountCards() {
 	for (var i = 0; i < elements.length; i++) {
 		count += Number(elements[i].count);
 	}
-	document.getElementById("deckCount").innerHTML = "_Deck_ " + count + "/60";
+	document.getElementById("deckCount").innerHTML = "_Deck_ " + count + "/50";
 }
 
 function initCriteriaButtons() {
-	var elements = document.getElementsByClassName("reqBtn");
-	for (var i = 0; i < elements.length; i++) {
+	const traitsDiv = document.getElementById('cardTraits');
+	for (let i = 0; i < cardTraits.length; i++) {
+		let trait = cardTraits[i];
+		const btn = document.createElement('button');
+		btn.classList.add("buttonStyle");
+		btn.classList.add("reqBtn");
+		btn.data = "1";
+		btn.id = trait;
+		btn.innerText = trait
+		const img = document.createElement('img');
+		img.src = "trait_images/"+trait+".png";
+		img.width = "60";
+		img.height = "52";
+		btn.appendChild(img);
+		traitsDiv.appendChild(btn)
+	}
+
+
+
+	let elements = document.getElementsByClassName("reqBtn");
+	for (let i = 0; i < elements.length; i++) {
 		elements[i].data = 1;
 		elements[i].addEventListener('click', requirement, false);
 	}
@@ -358,13 +410,23 @@ function requirement(event) {
 }
 
 function collapseBtnInit() {
-	var btn = document.getElementById('unitTypeBtn');
-	var div = document.getElementById('cardTypes');
+	let btn = document.getElementById('unitTypeBtn');
+	let div = document.getElementById('cardTypes');
 	btn.addEventListener("click", function(){
 		if (div.style.display === "block") {
 			div.style.display = "none";
 		} else {
 			div.style.display = "block";
+		}
+	}, false);
+
+	let btn2 = document.getElementById('unitTraitsButton');
+	let div2 = document.getElementById('cardTraits');
+	btn2.addEventListener("click", function(){
+		if (div2.style.display === "block") {
+			div2.style.display = "none";
+		} else {
+			div2.style.display = "block";
 		}
 	}, false);
 }
