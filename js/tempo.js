@@ -333,7 +333,7 @@ function findCards() {
 
 		//Trait requirements and bans
 		for (let trait of traitRequirements) {
-			if (!CardDB[c]["trait"].includes(trait)) {
+			if (!CardDB[c]["trait"].includes(trait) && !CardDB[c]["text"].toLowerCase().includes(trait.toLowerCase())) {
 				good = false;
 			}
 		}
@@ -366,10 +366,16 @@ function genButtons() {
 function CountCards() {
 	var elements = document.getElementsByClassName("cardbtn");
 	var count = 0;
+	let auxCount = 0;
 	for (var i = 0; i < elements.length; i++) {
-		count += Number(elements[i].count);
+		if (CardDB[elements[i].name]["aux"]) {
+			auxCount += Number(elements[i].count);
+		} else {
+			count += Number(elements[i].count);
+		}
 	}
-	document.getElementById("deckCount").innerHTML = "_Deck_ " + count + "/50";
+	document.getElementById("deckCount").innerHTML = "Deck " + count + "/40";
+	document.getElementById("auxDeckCount").innerHTML = "Aux Deck " + auxCount + "/20";
 }
 
 function initCriteriaButtons() {
@@ -381,9 +387,18 @@ function initCriteriaButtons() {
 		btn.classList.add("reqBtn");
 		btn.data = "1";
 		btn.id = trait;
-		btn.innerText = trait
+
+		let count = 0
+		// Count how many there are
+		for (var c in CardDB) {
+			if (CardDB[c]["trait"].includes(trait) || CardDB[c]["text"].toLowerCase().includes(trait.toLowerCase())) {
+				count++;
+			}
+		}
+		btn.innerHTML = trait + "<br>x"+count;
+
 		const img = document.createElement('img');
-		img.src = "trait_images/"+trait+".png";
+		img.src = "trait_images/"+trait.toLowerCase()+".png";
 		img.width = "60";
 		img.height = "52";
 		btn.appendChild(img);
@@ -409,6 +424,11 @@ function addButton(text) {
 	btn.name = text;
 	if (text in CardDB) {
 		btn.addEventListener('mouseover', changeDefOver);
+		btn.classList.add(CardDB[text]["type"]+"Class")
+		btn.classList.add(CardDB[text]["rare"]+"Class")
+		if (CardDB[text]["aux"]) {
+			btn.style.color = "#ffe761"
+		}
 	}
 	btn.addEventListener("click", function() {
 		addCard(text);
@@ -423,6 +443,7 @@ function addButton(text) {
 
 function addCard(cardName) {
 	const btnGroup = document.getElementById('btnGroup2');
+	const btnGroup3 = document.getElementById('btnGroup3');
 
 	const existBtn = document.getElementById(cardName + 'card');
 
@@ -430,6 +451,7 @@ function addCard(cardName) {
 		const Rarity = {
 			"Common": 8,
 			"BLUE": 4,
+			"": 4,
 			"Rare": 2,
 			"Unique": 1
 		};
@@ -447,14 +469,20 @@ function addCard(cardName) {
 		btn.setAttribute('alt', cardName);
 		btn.setAttribute('onclick', 'addCard(this.getAttribute("alt"))');
 		btn.innerHTML = cardName + " x1";
-		btnGroup.appendChild(btn);
+		btn.classList.add(CardDB[cardName]["rare"]+"Class")
+		btn.classList.add(CardDB[cardName]["type"]+"Class")
+		
 		btn.addEventListener('mouseover', changeDefOver);
 		btn.addEventListener('contextmenu', function(ev) {
 			ev.preventDefault();
 			removeCard(this.getAttribute("alt"));
 			return false;
 		}, false);
-		btnGroup.appendChild(btn);
+		if (CardDB[cardName]["aux"]) {
+			btnGroup3.appendChild(btn);
+		} else {
+			btnGroup.appendChild(btn);
+		}
 	}
 	CountCards()
 }
